@@ -9,3 +9,20 @@ extension AudioFormatID {
 		}
 	}
 }
+
+func check(error: OSStatus, description: String) {
+	guard error != noErr else { return }
+	
+	let errorString = error.bigEndian
+	let formatString: String? = withUnsafeBytes(of: errorString) { buffer in
+		let bytes = Array(buffer.bindMemory(to: UInt8.self))
+		return String(bytes: bytes, encoding: .utf8)
+	}
+	
+	if let formatString {
+		print("Error: \(description) (\(formatString))")
+	} else {
+		print("Error: \(description) (\(error))")
+	}
+	exit(1)
+}
